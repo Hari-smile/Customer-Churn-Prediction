@@ -1,0 +1,15 @@
+streamlit
+pandas
+joblib
+scikit-learn==1.7.2
+numpy
+OneHotEncoder
+ColumnTransformer
+Pipeline
+StandardScaler
+LogisticRegression
+SVC
+DecisionTreeClassifier
+RandomForestClassifier
+GradientBoostingClassifier
+KNeighborsClassifier
