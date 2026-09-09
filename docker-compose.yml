@@ -1,0 +1,14 @@
+services:
+  customer-churn-api:
+    build: .
+    container_name: customer-churn-container
+
+    ports:
+      - "5000:5000"
+
+    environment:
+      DB_SERVER: "host.docker.internal,1433"
+      DB_NAME: "customerchurnDB"
+      DB_USER: "churn_api"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      API_KEY: "${API_KEY}"

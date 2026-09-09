@@ -1,0 +1,9 @@
+Flask
+pandas
+joblib
+scikit-learn==1.7.2
+numpy
+pyodbc
+python-dotenv
+gunicorn
+Flasgger
