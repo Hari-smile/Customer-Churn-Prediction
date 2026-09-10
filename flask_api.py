@@ -67,6 +67,10 @@ def test_db():
 
     return "SQL Server connection successful", 200
 
+@app.route("/", methods=["GET"])
+def home_page():
+    return "Customer Churn API is running successfully"
+
 @app.route("/customer_churn", methods = ["GET","POST"])
 
 def home():
@@ -74,70 +78,6 @@ def home():
 
 @app.route("/predict", methods = ["POST"])
 def predict():
-    """
-    Predict customer churn
-    ---
-    consumes:
-      - application/json
-    produces:
-      - application/json
-    parameters:
-      - in: header
-        name: x-api-key
-        type: string
-        required: true
-        description: API authentication key
-
-      - in: body
-        name: customer_data
-        required: true
-        schema:
-          type: object
-          required:
-            - customer_name
-            - age
-            - gender
-            - city
-            - plan_type
-            - monthly_charges
-            - tenure_months
-            - payment_method
-          properties:
-            customer_name:
-              type: string
-              example: Compose Test
-            age:
-              type: integer
-              example: 30
-            gender:
-              type: string
-              example: Male
-            city:
-              type: string
-              example: Bangalore
-            plan_type:
-              type: string
-              example: Premium
-            monthly_charges:
-              type: number
-              example: 999
-            tenure_months:
-              type: integer
-              example: 12
-            payment_method:
-              type: string
-              example: UPI
-
-    responses:
-      201:
-        description: Prediction completed successfully
-      400:
-        description: Invalid or missing input
-      401:
-        description: Unauthorized
-      500:
-        description: Internal server error
-    """
 
     api_key = request.headers.get("x-api-key")
 
