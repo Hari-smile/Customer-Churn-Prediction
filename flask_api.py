@@ -78,7 +78,70 @@ def home():
 
 @app.route("/predict", methods = ["POST"])
 def predict():
-
+    """
+    Predict customer churn
+    ---
+    tags:
+      - Customer Churn
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: header
+        name: x-api-key
+        type: string
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - customer_name
+            - age
+            - gender
+            - city
+            - plan_type
+            - monthly_charges
+            - tenure_months
+            - payment_method
+          properties:
+            customer_name:
+              type: string
+              example: Rahul
+            age:
+              type: integer
+              example: 35
+            gender:
+              type: string
+              example: Male
+            city:
+              type: string
+              example: Bangalore
+            plan_type:
+              type: string
+              example: Premium
+            monthly_charges:
+              type: number
+              example: 75.5
+            tenure_months:
+              type: integer
+              example: 12
+            payment_method:
+              type: string
+              example: UPI
+    responses:
+      200:
+        description: Prediction completed successfully
+      400:
+        description: Invalid input
+      401:
+        description: Unauthorized
+      500:
+        description: Server error
+    """
+     
     api_key = request.headers.get("x-api-key")
 
     print("Received API key:", api_key)
