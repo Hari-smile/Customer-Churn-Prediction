@@ -52,6 +52,17 @@ def get_db_connection():
 
     return connection
 
+@app.route("/env_check", methods=["GET"])
+def env_check():
+
+    return jsonify({
+        "DB_HOST": os.getenv("DB_HOST"),
+        "DB_PORT": os.getenv("DB_PORT"),
+        "DB_NAME": os.getenv("DB_NAME"),
+        "DB_USER": os.getenv("DB_USER"),
+        "DB_PASSWORD_SET": bool(os.getenv("DB_PASSWORD"))
+    })
+
 @app.route("/test_db", methods=["GET"])
 def test_db():
     """
