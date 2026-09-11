@@ -1,7 +1,7 @@
 from flask import Flask, request , jsonify
 import joblib
 import pandas as pd
-import pyodbc
+import psycopg
 import logging
 import os
 from dotenv import load_dotenv
@@ -30,23 +30,24 @@ model = joblib.load("customer_churn_pipeline.pkl")
 
 def get_db_connection():
 
-    server = os.getenv("DB_SERVER")
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT", "5432")
     database = os.getenv("DB_NAME")
     username = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
 
-    print("DB_SERVER:", server)
+    print("DB_HOST:", host)
     print("DB_NAME:", database)
     print("DB_USER:", username)
     print("DB_PASSWORD SET:", bool(password))
 
-    connection = pyodbc.connect(
-        "Driver={ODBC Driver 18 for SQL Server};"
-        f"Server={server};"
-        f"Database={database};"
-        f"UID={username};"
-        f"PWD={password};"
-        "TrustServerCertificate=yes;"
+    connection = psycopg.connect(
+        host=host,
+        port=port,
+        dbname=database,
+        user=username,
+        password=password,
+        sslmode="require"
     )
 
     return connection
@@ -54,18 +55,18 @@ def get_db_connection():
 @app.route("/test_db", methods=["GET"])
 def test_db():
     """
-    Test SQL Server connection
+    Test PostgreSQL  connection
     ---
     responses:
       200:
-        description: SQL Server connection successful
+        description: PostgreSQL connection successful
     """
 
     connection = get_db_connection()
 
     connection.close()
 
-    return "SQL Server connection successful", 200
+    return "PostgreSQL connection successful", 200
 
 @app.route("/", methods=["GET"])
 def home_page():
@@ -271,32 +272,33 @@ def predict():
 
         cursor  = connection.cursor()
 
-        #Generate next customer id
+        # Generate next customer id
         cursor.execute("""
-        Select isnull(max(customer_id),0)+1 
-        from customers
+            SELECT COALESCE(MAX(customer_id), 0) + 1
+            FROM customers
         """)
-        customer_id  = cursor.fetchone()[0]
+        customer_id = cursor.fetchone()[0]
 
-        #generate subscription id 
+        # Generate next subscription id
         cursor.execute("""
-        Select isnull(max(subcription_id),0)+1
-        from subscriptions
+            SELECT COALESCE(MAX(subcription_id), 0) + 1
+            FROM subscriptions
         """)
         subcription_id = cursor.fetchone()[0]
 
-        #generate payment id 
+        # Generate next payment id
         cursor.execute("""
-        Select isnull(max(payment_id),0)+1
-        from payments
+            SELECT COALESCE(MAX(payment_id), 0) + 1
+            FROM payments
         """)
-        payment_id= cursor.fetchone()[0]
+        payment_id = cursor.fetchone()[0]
 
         #insert customer
-        cursor.execute(""" 
-        Insert Into customers 
-        (customer_id,customer_name,age,gender,city,churn)
-        Values(?,?,?,?,?,?)
+        # Insert customer
+        cursor.execute("""
+            INSERT INTO customers
+            (customer_id, customer_name, age, gender, city, churn)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
             customer_id,
@@ -308,10 +310,11 @@ def predict():
         ))
 
         #insert subscription
+        # Insert subscription
         cursor.execute("""
-        Insert Into subscriptions
-        (subcription_id,customer_id,plan_type,monthly_charges,tenure_months)
-        values (?,?,?,?,?)
+            INSERT INTO subscriptions
+            (subcription_id, customer_id, plan_type, monthly_charges, tenure_months)
+            VALUES (%s, %s, %s, %s, %s)
         """,
         (
             subcription_id,
@@ -322,11 +325,12 @@ def predict():
         ))
 
         #insert payment 
+        # Insert payment
         cursor.execute("""
-        Insert Into payments
-        (payment_id,customer_id,payment_method)
-        values(?,?,?)""",
-
+            INSERT INTO payments
+            (payment_id, customer_id, payment_method)
+            VALUES (%s, %s, %s)
+        """,
         (
             payment_id,
             customer_id,
