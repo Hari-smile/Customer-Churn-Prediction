@@ -7,8 +7,11 @@ def test_home():
 
     assert response.status_code == 200  
 
-def test_predict_without_api_key():
+def test_predict_without_api_key(monkeypatch):
+    monkeypatch.setenv("API_KEY", "test-secret-key")
+
     client = app.test_client()
 
-    response= client.post("/predict",json={})
-    assert response.status_code ==401
+    response = client.post("/predict", json={})
+
+    assert response.status_code == 401
