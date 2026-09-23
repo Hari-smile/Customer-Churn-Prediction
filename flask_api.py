@@ -6,8 +6,7 @@ import logging
 import os
 from dotenv import load_dotenv
 from flasgger import Swagger
-import mlflow.sklearn
-import mlflow
+
 
 
 load_dotenv()
