@@ -8,3 +8,4 @@ python-dotenv
 gunicorn
 Flasgger
 pytest
+skops
