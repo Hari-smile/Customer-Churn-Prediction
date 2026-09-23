@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY flask_api.py .
-COPY customer_churn_pipeline.pkl .
+COPY customer_churn_model.skops .
 
 EXPOSE 5000
 
