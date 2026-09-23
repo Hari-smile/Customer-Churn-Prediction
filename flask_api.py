@@ -6,7 +6,7 @@ import logging
 import os
 from dotenv import load_dotenv
 from flasgger import Swagger
-import traceback
+
 
 
 load_dotenv()
@@ -381,13 +381,12 @@ def predict():
     
     except Exception as e:
         logger.exception("Prediction API failed")
-        
+
         return jsonify({
             "status": "error",
             "message": "Internal server error",
             "error": str(e),
-            "error_type": type(e).__name__,
-            "traceback": traceback.format_exc()
+            "error_type": type(e).__name__
         }), 500
 
     
