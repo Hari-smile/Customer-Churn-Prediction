@@ -380,18 +380,13 @@ def predict():
         }),201
     
     except Exception as e:
-
-        if connection:
-            connection.rollback()
-
-        logger.exception("Prediction API failed")  
-
+        logger.exception("Prediction API failed")
         return jsonify({
-            "status":"error",
-            "message":"Internal server error",
-            "error":str(e)
-
-        }),500
+            "status": "error",
+            "message": "Internal server error",
+            "error": str(e),
+            "error_type": type(e).__name__
+        }), 500
 
     
     finally:
