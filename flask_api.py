@@ -384,7 +384,7 @@ def predict():
         if connection:
             connection.rollback()
 
-        logger.info("An error  occured: %s",e)    
+        logger.exception("Prediction API failed")  
 
         return jsonify({
             "status":"error",
