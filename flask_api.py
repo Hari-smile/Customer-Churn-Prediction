@@ -29,8 +29,12 @@ logger = logging.getLogger(__name__)
 import skops.io as sio
 
 # Load the MLflow-generated model artifact
+import os
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "customer_churn_model.skops")
+
 model = sio.load(
-    "customer_churn_model.skops",
+    MODEL_PATH,
     trusted=["scipy.sparse._csr.csr_matrix"]
 )
 
