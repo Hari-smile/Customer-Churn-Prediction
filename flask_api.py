@@ -6,6 +6,9 @@ import logging
 import os
 from dotenv import load_dotenv
 from flasgger import Swagger
+import mlflow.sklearn
+import mlflow
+
 
 load_dotenv()
 
@@ -24,9 +27,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-#load the saved model
-model = joblib.load("customer_churn_pipeline.pkl")
+import skops.io as sio
 
+# Load the MLflow-generated model artifact
+model = sio.load(
+    "customer_churn_model.skops",
+    trusted=["scipy.sparse._csr.csr_matrix"]
+)
 
 def get_db_connection():
 
@@ -393,4 +400,4 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5001)
